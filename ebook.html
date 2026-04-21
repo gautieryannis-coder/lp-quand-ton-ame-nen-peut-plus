@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quand ton âme n'en peut plus — Yannis Gautier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:          #0F1923;
+    --ink2:         #1E2D3D;
+    --slate:        #2C4A6E;
+    --accent:       #4E8FBF;
+    --accent-light: #A8CCE8;
+    --accent-pale:  #EBF4FB;
+    --cream:        #F8F6F2;
+    --warm:         #EDE9E3;
+    --muted:        #7A8B99;
+    --white:        #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: #2a2a2a;
+    line-height: 1.8;
+  }
+
+  /* PROGRESS BAR */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; z-index: 200;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent), var(--accent-light));
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,25,35,0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(78,143,191,0.15);
+    padding: 0 40px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600;
+    color: var(--accent-light);
+    letter-spacing: 0.03em;
+  }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .nav-home {
+    font-size: 12.5px; color: var(--muted);
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+  .nav-home:hover { color: var(--accent-light); text-decoration: none; }
+  .btn-dl {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--white);
+    background: var(--accent);
+    padding: 9px 20px; border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .btn-dl:hover { background: var(--slate); text-decoration: none; }
+
+  /* COVER */
+  .cover {
+    background: radial-gradient(ellipse 80% 70% at 50% 30%, rgba(46,74,110,0.6) 0%, transparent 70%),
+                var(--ink);
+    padding: 96px 24px 80px;
+    text-align: center;
+  }
+  .cover-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 700; line-height: 1.08;
+    color: var(--white); margin-bottom: 18px;
+  }
+  .cover h1 em { font-style: italic; color: var(--accent-light); }
+  .cover-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-style: italic; color: var(--muted);
+    margin-bottom: 40px;
+  }
+  .cover-divider {
+    width: 48px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    margin: 0 auto 24px;
+  }
+  .cover-author {
+    font-size: 14px; color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* CONTENT */
+  .content-wrap {
+    max-width: 720px; margin: 0 auto;
+    padding: 80px 32px 120px;
+  }
+
+  /* CHAPTER */
+  .chapter { margin-bottom: 80px; }
+  .chapter-header {
+    display: flex; align-items: flex-start; gap: 24px;
+    margin-bottom: 36px;
+  }
+  .chapter-num {
+    width: 52px; height: 52px; min-width: 52px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+  .chapter-title-wrap {}
+  .chapter-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .chapter h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700; line-height: 1.2;
+    color: var(--ink);
+  }
+  .chapter p {
+    font-size: 17px; line-height: 1.9;
+    color: #3a3a3a;
+    margin-bottom: 20px;
+  }
+
+  /* VERSE */
+  .verse {
+    margin: 36px 0;
+    padding: 28px 36px;
+    background: var(--ink);
+    border-radius: 3px;
+    text-align: center;
+    position: relative;
+  }
+  .verse::before {
+    content: '\201C';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px; color: rgba(78,143,191,0.2);
+    position: absolute; top: -10px; left: 20px;
+    line-height: 1;
+  }
+  .verse p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-style: italic;
+    color: var(--accent-pale);
+    line-height: 1.65;
+    margin-bottom: 12px !important;
+    position: relative;
+  }
+  .verse cite {
+    font-size: 12px; font-style: normal;
+    color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* PUNCHLINE */
+  .punchline {
+    margin: 32px 0;
+    padding: 22px 28px;
+    border-left: 3px solid var(--accent);
+    background: rgba(78,143,191,0.06);
+  }
+  .punchline p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-style: italic;
+    color: var(--ink); font-weight: 600;
+    margin-bottom: 0 !important;
+  }
+
+  /* CHAPTER SEPARATOR */
+  .ch-sep {
+    width: 64px; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(78,143,191,0.4), transparent);
+    margin: 80px auto;
+  }
+
+  /* PRAYER */
+  .prayer {
+    background: var(--ink);
+    border-radius: 6px;
+    padding: 56px 48px;
+    text-align: center;
+    margin: 80px 0 40px;
+  }
+  .prayer-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 28px;
+  }
+  .prayer p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-style: italic;
+    color: var(--accent-pale); line-height: 1.85;
+    margin-bottom: 0 !important;
+  }
+  .prayer .amen {
+    margin-top: 28px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--accent-light);
+    letter-spacing: 0.1em;
+    display: block;
+    font-style: normal;
+  }
+
+  /* CTA BLOCK */
+  .cta-block {
+    background: var(--ink2);
+    border: 1px solid rgba(78,143,191,0.2);
+    border-radius: 6px;
+    padding: 48px 40px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .cta-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .cta-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--white); margin-bottom: 16px;
+  }
+  .cta-block p {
+    font-size: 15px; color: var(--muted);
+    max-width: 420px; margin: 0 auto 32px;
+    line-height: 1.8;
+  }
+  .btn-duo { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 14px 28px; border-radius: 3px;
+    transition: background 0.2s; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--slate); text-decoration: none; }
+  .btn-secondary {
+    background: transparent; color: var(--accent-light);
+    border: 1px solid rgba(168,204,232,0.35);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 14px 28px; border-radius: 3px;
+    transition: border-color 0.2s; display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--accent-light); text-decoration: none; }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 24px;
+    background: var(--ink);
+    border-top: 1px solid rgba(78,143,191,0.1);
+    text-align: center;
+  }
+  .footer-inner {
+    max-width: 720px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--muted); }
+  .footer-links { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+  .footer-links a { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent-light); text-decoration: none; }
+  .footer-copy { font-size: 11px; color: rgba(122,139,153,0.55); }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .cover { padding: 72px 20px 56px; }
+    .content-wrap { padding: 56px 20px 80px; }
+    .chapter-header { flex-direction: column; gap: 14px; }
+    .prayer { padding: 36px 24px; }
+    .cta-block { padding: 36px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <span class="nav-brand">Yannis Gautier</span>
+  <div class="nav-right">
+    <a class="nav-home" href="index.html">← Retour</a>
+    <a class="btn-dl" href="ebook_burnout_spirituel.pdf" download>Télécharger le PDF</a>
+  </div>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <p class="cover-label">Guide spirituel</p>
+  <h1>Quand ton âme<br><em>n'en peut plus</em></h1>
+  <p class="cover-subtitle">Un guide pour ceux qui servent Dieu à bout de souffle</p>
+  <div class="cover-divider"></div>
+  <p class="cover-author">Yannis Gautier</p>
+</div>
+
+<!-- CONTENT -->
+<div class="content-wrap">
+
+  <!-- CHAPTER 1 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">1</div>
+      <div class="chapter-title-wrap">
+        <p class="chapter-label">Chapitre un</p>
+        <h2>Le mensonge que tu te racontes</h2>
+      </div>
+    </div>
+
+    <p>Tu t'es convaincu que tenir debout, c'est de la foi. Que continuer à servir malgré l'épuisement, c'est de la dévotion. Que t'arrêter serait trahir Dieu.</p>
+    <p>C'est un mensonge.</p>
+    <p>Un mensonge pieux, oui. Mais un mensonge quand même.</p>
+    <p>La vérité, c'est que Dieu n'a jamais demandé que tu te détruises pour Lui. Il n'a pas besoin de tes ruines. Il veut ta présence — vivante, entière, réelle.</p>
+    <p>Élie était l'un des plus grands prophètes d'Israël. Il venait de remporter la bataille du Carmel. Et pourtant, le voilà sous un genêt, dans le désert, qui demande à mourir.</p>
+
+    <div class="verse">
+      <p>« C'en est assez, Seigneur. »</p>
+      <cite>1 Rois 19:4</cite>
+    </div>
+
+    <p>C'est ça, le burnout spirituel. Pas l'incrédulité. L'épuisement total d'un homme qui a tout donné.</p>
+
+    <div class="punchline">
+      <p>Servir Dieu en ignorant ta fatigue, ce n'est pas de la foi. C'est de l'orgueil déguisé en dévotion.</p>
+    </div>
+  </div>
+
+  <div class="ch-sep"></div>
+
+  <!-- CHAPTER 2 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">2</div>
+      <div class="chapter-title-wrap">
+        <p class="chapter-label">Chapitre deux</p>
+        <h2>Ce que le burnout révèle vraiment</h2>
+      </div>
+    </div>
+
+    <p>Le burnout spirituel n'est pas un signe que tu as échoué. C'est un révélateur.</p>
+    <p>Il révèle que tu as confondu ton identité avec ton service. Que tu t'es défini par ce que tu fais pour Dieu, plutôt que par ce que tu es pour Lui.</p>
+    <p>Il révèle que quelque part, tu as cru que ton repos était une faiblesse. Que ralentir serait perdre ta place. Que si tu t'arrêtes, tout s'effondre.</p>
+    <p>Il révèle la pression invisible que tu portes — la peur de décevoir, le besoin d'être irremplaçable, l'impossibilité de dire non.</p>
+
+    <div class="verse">
+      <p>« Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos. »</p>
+      <cite>Matthieu 11:28</cite>
+    </div>
+
+    <p>Jésus n'a pas dit ça aux paresseux. Il l'a dit aux épuisés. À ceux qui portent trop. À ceux qui ont confondu le joug du service religieux avec le joug léger de l'amour.</p>
+
+    <div class="punchline">
+      <p>Tu n'es pas une machine à servir Dieu. Tu es un enfant aimé de Dieu.</p>
+    </div>
+  </div>
+
+  <div class="ch-sep"></div>
+
+  <!-- CHAPTER 3 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">3</div>
+      <div class="chapter-title-wrap">
+        <p class="chapter-label">Chapitre trois</p>
+        <h2>Ce que Dieu fait quand tu t'effondres</h2>
+      </div>
+    </div>
+
+    <p>Regarde ce que Dieu fait avec Élie effondré.</p>
+    <p>Il n'envoie pas un sermon. Il n'envoie pas une correction. Il n'envoie pas une liste de versets à mémoriser.</p>
+    <p>Il envoie un ange. Avec du pain chaud et une cruche d'eau.</p>
+
+    <div class="verse">
+      <p>« Lève-toi et mange, car le chemin est trop long pour toi. »</p>
+      <cite>1 Rois 19:7</cite>
+    </div>
+
+    <p>Dieu commence par le corps. Pas par la théologie. Il commence par la tendresse concrète.</p>
+    <p>C'est ça, la grâce dans l'épuisement : Dieu ne te condamne pas d'être à terre. Il s'agenouille à côté de toi.</p>
+    <p>Il sait que le chemin qui t'attend sera long. Il sait que tu ne peux pas repartir à vide. Alors avant de te parler de mission, avant de te parler de repentance, avant de te parler de quoi que ce soit — Il te nourrit.</p>
+
+    <div class="punchline">
+      <p>Quand tu touches le fond, Dieu ne t'envoie pas un sermon. Il t'envoie du pain chaud.</p>
+    </div>
+  </div>
+
+  <div class="ch-sep"></div>
+
+  <!-- CHAPTER 4 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">4</div>
+      <div class="chapter-title-wrap">
+        <p class="chapter-label">Chapitre quatre</p>
+        <h2>Revenir à la source</h2>
+      </div>
+    </div>
+
+    <p>Le renouveau ne commence pas dans une salle de conférence. Il ne commence pas avec un programme de lecture de la Bible en 90 jours. Il ne commence pas par une promesse de faire mieux.</p>
+    <p>Il commence dans le silence.</p>
+
+    <div class="verse">
+      <p>« Après le feu, il y eut une voix douce et subtile. »</p>
+      <cite>1 Rois 19:12</cite>
+    </div>
+
+    <p>Élie cherchait Dieu dans le tremblement de terre, dans le vent violent, dans le feu. Dieu n'était dans aucun de ces endroits.</p>
+    <p>Il était dans le murmure.</p>
+    <p>Le burnout t'a peut-être séparé de ça — du murmure. De la prière qui n'est pas une performance. Du silence qui n'est pas une perte de temps. De la présence qui n'est pas une obligation.</p>
+    <p>Revenir à la source, c'est revenir à l'essentiel : tu n'as pas à gagner Son amour. Tu l'as déjà.</p>
+
+    <div class="punchline">
+      <p>Le vrai renouveau ne commence pas quand tu travailles plus fort pour Dieu. Il commence quand tu t'arrêtes assez longtemps pour L'entendre.</p>
+    </div>
+  </div>
+
+  <div class="ch-sep"></div>
+
+  <!-- CHAPTER 5 -->
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">5</div>
+      <div class="chapter-title-wrap">
+        <p class="chapter-label">Chapitre cinq</p>
+        <h2>L'action décisive</h2>
+      </div>
+    </div>
+
+    <p>Élie est reparti. Pas dans la même direction. Pas avec la même énergie. Mais reparti.</p>
+    <p>Dieu lui a donné une nouvelle mission, de nouveaux compagnons, et un successeur — Élisée. Il l'a repositionné, pas abandonné.</p>
+    <p>C'est ce que Dieu fait avec les épuisés qui lui font confiance : Il ne les remet pas sur le même chemin pour s'y épuiser à nouveau. Il les repositionne.</p>
+    <p>Aujourd'hui, ton action décisive n'est peut-être pas de faire plus. Elle est peut-être de t'arrêter enfin. De dire non à quelque chose. De demander de l'aide. De dormir. De pleurer. De parler à quelqu'un.</p>
+
+    <div class="verse">
+      <p>« Ceux qui espèrent en l'Éternel renouvellent leur force. Ils prennent leur envol comme les aigles. »</p>
+      <cite>Ésaïe 40:31</cite>
+    </div>
+
+    <p>L'aigle ne monte pas en s'agitant plus fort. Il monte en s'abandonnant aux courants d'air chaud.</p>
+    <p>Abandonne-toi.</p>
+
+    <div class="punchline">
+      <p>Le burnout spirituel n'est pas la fin de ta foi. C'est l'invitation à une foi plus profonde, plus vraie, plus libre.</p>
+    </div>
+  </div>
+
+  <!-- PRAYER -->
+  <div class="prayer">
+    <p class="prayer-label">Prière finale</p>
+    <p>
+      Seigneur, je suis fatigué.<br>
+      Pas de Toi — de moi-même, de la pression, du poids que je portais seul.<br>
+      Apprends-moi à recevoir avant de donner.<br>
+      À être avant de faire.<br>
+      Nourris-moi comme Tu as nourri Élie — avec simplicité, avec tendresse.<br>
+      Et quand il sera temps de repartir, repositionne-moi.<br>
+      Pas là où j'étais, mais là où Tu veux que je sois.
+    </p>
+    <span class="amen">Amen.</span>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <p class="cta-label">Pour aller plus loin</p>
+    <h3>Ce guide t'a parlé ?</h3>
+    <p>Rejoins la communauté de Yannis Gautier pour recevoir chaque semaine des ressources spirituelles, des encouragements et des outils concrets pour avancer dans ta foi.</p>
+    <div class="btn-duo">
+      <a class="btn-primary" href="index.html">Recevoir les ressources gratuites</a>
+      <a class="btn-secondary" href="ebook_burnout_spirituel.pdf" download>Télécharger le PDF</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p class="footer-brand">Yannis Gautier — contact@yannisgautier.fr</p>
+    <nav class="footer-links">
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="politique-confidentialite.html">Politique de confidentialité</a>
+      <a href="index.html">Retour à l'accueil</a>
+    </nav>
+    <p class="footer-copy">© 2026 Yannis Gautier. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop || document.body.scrollTop;
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+</script>
+</body>
+</html>
