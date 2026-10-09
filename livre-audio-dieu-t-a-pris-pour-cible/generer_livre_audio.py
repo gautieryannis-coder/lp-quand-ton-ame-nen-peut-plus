@@ -4,7 +4,7 @@ Livre audio « Dieu t'a pris pour cible » — génération ElevenLabs + montage
 
 Usage :
     export ELEVENLABS_API_KEY=...            # clé API ElevenLabs
-    python3 generer_livre_audio.py --voice-id <ID de la voix Nicolas>
+    python3 generer_livre_audio.py                   # voix Nicolas Petit par défaut
 
     python3 generer_livre_audio.py --estimation      # compte les caractères, aucun appel API
     python3 generer_livre_audio.py --voix            # liste les voix du compte (pour trouver Nicolas)
@@ -276,12 +276,13 @@ def monter(chapitres, args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--voice-id", default=os.environ.get("ELEVENLABS_VOICE_ID"))
+    # Préréglage « audiobook.nicolas-petit » (voix Nicolas Petit)
+    ap.add_argument("--voice-id", default=os.environ.get("ELEVENLABS_VOICE_NICOLAS_PETIT", "aQROLel5sQbj1vuIVi6B"))
     ap.add_argument("--model", default=os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2"))
-    ap.add_argument("--stability", type=float, default=0.50)
-    ap.add_argument("--similarity", type=float, default=0.80)
-    ap.add_argument("--style", type=float, default=0.15)
-    ap.add_argument("--speed", type=float, default=0.95)
+    ap.add_argument("--stability", type=float, default=0.48)
+    ap.add_argument("--similarity", type=float, default=0.88)
+    ap.add_argument("--style", type=float, default=0.14)
+    ap.add_argument("--speed", type=float, default=0.86)
     ap.add_argument("--langue", default=None, help="ex. fr (seulement si le modèle l'accepte)")
     ap.add_argument("--format", default="mp3_44100_128")
     ap.add_argument("--pochette", type=Path, help="image JPG/PNG carrée pour la pochette")
