@@ -86,11 +86,12 @@ def requete(methode, chemin, cle, corps=None, query="", essais=5):
     url = f"{API}{chemin}{query}"
     donnees = json.dumps(corps).encode("utf-8") if corps is not None else None
     for essai in range(essais):
-        req = urllib.request.Request(url, data=donnees, method=methode, headers={
-            "xi-api-key": cle,
-            "Content-Type": "application/json",
-            "Accept": "audio/mpeg" if corps is not None else "application/json",
-        })
+        entetes = {"Content-Type": "application/json",
+                   "Accept": "audio/mpeg" if corps is not None else "application/json"}
+        if cle:
+            # Sans clé locale, la requête part telle quelle (clé injectée par le proxy de l'environnement)
+            entetes["xi-api-key"] = cle
+        req = urllib.request.Request(url, data=donnees, method=methode, headers=entetes)
         try:
             with urllib.request.urlopen(req, timeout=180) as r:
                 return r.read(), dict(r.headers)
@@ -301,9 +302,9 @@ def main():
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg est introuvable (macOS : brew install ffmpeg)")
     cle = os.environ.get("ELEVENLABS_API_KEY")
+    if not cle and not args.montage_seul:
+        print("ELEVENLABS_API_KEY absente : on compte sur la clé injectée par le réseau de l'environnement.")
     if args.voix:
-        if not cle:
-            sys.exit("ELEVENLABS_API_KEY manquante")
         return lister_voix(cle)
 
     if args.montage_seul:
@@ -315,8 +316,6 @@ def main():
                     sys.exit(f"Segment manquant : {c['fichier']} paragraphe {i}")
                 p["mp3"] = trouves[-1]
     else:
-        if not cle:
-            sys.exit("ELEVENLABS_API_KEY manquante")
         if not args.voice_id:
             sys.exit("Indique la voix : --voice-id <ID> (python3 generer_livre_audio.py --voix pour la liste)")
         generer_segments(chapitres, args, cle)
