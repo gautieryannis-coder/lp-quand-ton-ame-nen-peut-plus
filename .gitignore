@@ -18,5 +18,5 @@ node_modules/
 # Env
 .env
 .env.local
-livre-audio-dieu-t-a-pris-pour-cible/segments/
-livre-audio-dieu-t-a-pris-pour-cible/sortie/
+livres-audio/*/segments/
+livres-audio/*/sortie/

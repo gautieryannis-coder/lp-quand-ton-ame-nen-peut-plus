@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-Livre audio « Dieu t'a pris pour cible » — génération ElevenLabs + montage ffmpeg.
+Livres audio Yannis Gautier — génération ElevenLabs + montage ffmpeg.
+
+Chaque livre a son dossier : livre.json (titre, chapitres) + texte/*.txt.
 
 Usage :
-    export ELEVENLABS_API_KEY=...            # clé API ElevenLabs
-    python3 generer_livre_audio.py                   # voix Nicolas Petit par défaut
+    export ELEVENLABS_API_KEY=...                          # clé API ElevenLabs
+    python3 generer_livre_audio.py dieu-n-a-pas-fini-avec-toi   # voix Nicolas Petit par défaut
+    python3 generer_livre_audio.py dieu-n-a-pas-fini-avec-toi --pochette couverture.jpg
 
-    python3 generer_livre_audio.py --estimation      # compte les caractères, aucun appel API
-    python3 generer_livre_audio.py --voix            # liste les voix du compte (pour trouver Nicolas)
+    python3 generer_livre_audio.py <livre> --estimation    # compte les caractères, aucun appel API
+    python3 generer_livre_audio.py <livre> --voix          # liste les voix du compte
 
 Chaque paragraphe est généré séparément (avec le texte qui précède et qui suit
 pour garder une intonation continue), mis en cache dans segments/, puis les
@@ -30,27 +33,29 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ICI = Path(__file__).resolve().parent
-DOSSIER_TEXTE = ICI / "texte"
-DOSSIER_SEGMENTS = ICI / "segments"
-DOSSIER_SORTIE = ICI / "sortie"
 API = "https://api.elevenlabs.io/v1"
-
-TITRE = "Dieu t'a pris pour cible"
-SOUS_TITRE = "Les quatre flèches que le Ciel a tirées sur ta vie"
 AUTEUR = "Yannis Gautier"
 EDITEUR = "Gospel Action Productions (GAP)"
-NOM_FICHIER = "Dieu-t-a-pris-pour-cible_livre-audio"
 
-CHAPITRES = {
-    "00": "Un mot pour toi",
-    "01": "Dieu t'a pris pour cible",
-    "02": "Première flèche : son amour",
-    "03": "Deuxième flèche : sa présence",
-    "04": "Troisième flèche : sa provision",
-    "05": "Quatrième flèche : sa bénédiction",
-    "06": "Laisse-toi atteindre — prière",
-}
+# Renseignés par charger_livre() à partir du dossier du livre
+DOSSIER_TEXTE = DOSSIER_SEGMENTS = DOSSIER_SORTIE = None
+TITRE = SOUS_TITRE = NOM_FICHIER = ""
+CHAPITRES = {}
+
+
+def charger_livre(dossier):
+    global DOSSIER_TEXTE, DOSSIER_SEGMENTS, DOSSIER_SORTIE, TITRE, SOUS_TITRE, NOM_FICHIER, CHAPITRES
+    dossier = Path(dossier)
+    if not dossier.is_absolute() and not dossier.exists():
+        dossier = Path(__file__).resolve().parent / dossier
+    dossier = dossier.resolve()
+    fiche = dossier / "livre.json"
+    if not fiche.exists():
+        sys.exit(f"{fiche} introuvable")
+    infos = json.loads(fiche.read_text(encoding="utf-8"))
+    DOSSIER_TEXTE, DOSSIER_SEGMENTS, DOSSIER_SORTIE = dossier / "texte", dossier / "segments", dossier / "sortie"
+    TITRE, SOUS_TITRE, NOM_FICHIER = infos["titre"], infos["sous_titre"], infos["nom_fichier"]
+    CHAPITRES = infos["chapitres"]
 
 # Silences (secondes)
 DEBUT_CHAPITRE = 0.6
@@ -277,6 +282,7 @@ def monter(chapitres, args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("livre", help="dossier du livre (contient livre.json et texte/)")
     # Préréglage « audiobook.nicolas-petit » (voix Nicolas Petit)
     ap.add_argument("--voice-id", default=os.environ.get("ELEVENLABS_VOICE_NICOLAS_PETIT", "aQROLel5sQbj1vuIVi6B"))
     ap.add_argument("--model", default=os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2"))
@@ -292,6 +298,7 @@ def main():
     ap.add_argument("--montage-seul", action="store_true", help="remonte à partir des segments déjà générés")
     args = ap.parse_args()
 
+    charger_livre(args.livre)
     chapitres = lire_chapitres()
     nb = sum(len(p["texte"]) for c in chapitres for p in c["paragraphes"])
     print(f"{len(chapitres)} chapitres, {sum(len(c['paragraphes']) for c in chapitres)} paragraphes, "
