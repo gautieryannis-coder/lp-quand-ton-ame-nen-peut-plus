@@ -3,13 +3,12 @@
   "sous_titre": "Quand tu crois que c'est trop tard, Dieu, lui, est encore en train d'écrire",
   "nom_fichier": "Dieu-n-a-pas-fini-avec-toi_livre-audio",
   "chapitres": {
-    "00": "Un mot pour toi",
     "01": "Dieu n'a pas fini avec toi",
-    "02": "Première vérité : le potier reprend le vase",
-    "03": "Deuxième vérité : Dieu parle une deuxième fois",
-    "04": "Troisième vérité : celui qui tombe peut se relever",
-    "05": "Quatrième vérité : ce que Dieu commence, il le termine",
-    "06": "Ce n'est pas trop tard — prière"
+    "02": "Le potier reprend le vase",
+    "03": "Dieu parle une deuxième fois",
+    "04": "Celui qui tombe peut se relever",
+    "05": "Ce que Dieu commence, il le termine",
+    "06": "Ce n'est pas trop tard"
   },
-  "generer": false
+  "generer": true
 }

@@ -11,7 +11,7 @@ DEPOT="$BASE/depot"
 BRANCHE="claude/livre-audio-dieu-t-a-pris-pour-cible"
 CLE="$HOME/Movies/Claude/.secrets/elevenlabs.env"
 DRIVE_AUDIOBOOKS="1zMgiZvC4P40Eix77D58RwO7QNL9jnjnv"
-export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+export PATH="$BASE/bin:$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/opt/local/bin:/usr/bin:/bin:$PATH"
 
 mkdir -p "$BASE"
 exec >>"$BASE/journal.log" 2>&1
@@ -21,6 +21,13 @@ trap 'rmdir "$VERROU"' EXIT
 
 note() { echo "$(date '+%d/%m %H:%M') $*"; }
 alerte() { osascript -e "display notification \"$1\" with title \"Livres audio\"" >/dev/null 2>&1 || true; }
+
+# ffmpeg sert au master (−23 LUFS) ; s'il n'est pas dans le PATH, on cherche celui déjà présent sur le Mac
+if ! command -v ffmpeg >/dev/null; then
+  trouve=$(find "$HOME/Movies/Claude" "$HOME/Library/Python" "$HOME/.local" "$HOME/miniconda3" "$HOME/anaconda3" \
+           -maxdepth 7 -type f -name 'ffmpeg*' -perm -u+x 2>/dev/null | grep -v '\.py$' | head -1)
+  if [ -n "$trouve" ]; then mkdir -p "$BASE/bin"; ln -sf "$trouve" "$BASE/bin/ffmpeg"; note "ffmpeg trouvé : $trouve"; fi
+fi
 
 cd "$DEPOT" || { note "dépôt introuvable : $DEPOT"; exit 1; }
 git fetch -q origin "$BRANCHE" && git reset -q --hard "origin/$BRANCHE" || { note "impossible de récupérer la branche"; exit 1; }
@@ -38,15 +45,14 @@ for fiche in */livre.json; do
   [ -f "$CLE" ] || { note "clé ElevenLabs absente : $CLE"; alerte "Clé ElevenLabs introuvable"; exit 1; }
   set -a; source "$CLE"; set +a
 
-  pochette=(); [ -f "$livre/couverture.jpg" ] && pochette=(--pochette "$livre/couverture.jpg")
-  if ! python3 generer_livre_audio.py "$livre" ${pochette[@]+"${pochette[@]}"} > "$livre/journal.txt" 2>&1; then
+  if ! python3 generer_livre_audio.py "$livre" > "$livre/journal.txt" 2>&1; then
     note "ÉCHEC : $titre (voir $DEPOT/livres-audio/$livre/journal.txt)"
     if [ "$(cat "$BASE/.echec-$livre" 2>/dev/null)" != "$empreinte" ]; then
       alerte "Échec : $titre"; echo "$empreinte" > "$BASE/.echec-$livre"
     fi
     continue
   fi
-  cp "$livre/journal.txt" "$livre/sortie/rapport.txt"
+  cp "$livre/journal.txt" "$livre/sortie/journal.txt"
 
   mkdir -p "$HOME/Movies/Claude/audiobooks/$livre"
   cp -R "$livre/sortie/." "$HOME/Movies/Claude/audiobooks/$livre/"

@@ -4,33 +4,36 @@
 avec `livre.json` (titre, sous-titre, chapitres) et `texte/*.txt` (une partie par fichier,
 lignes `## ` = titres, suivis d'une pause plus longue).
 
-## Texte
+## Texte (process validé le 02/10, prompts/LIVRE-AUDIO-NICOLAS.md sur l'iMac)
 
-- Garder le texte de Yannis mot pour mot. Seules retouches : ce qui aide la voix.
-- Références bibliques et nombres toujours **en toutes lettres**
-  (« Jérémie, chapitre dix-huit, verset quatre », jamais « Jr 18:4 » ni « 18 »).
-  Leçon du 10/10 : des chiffres oubliés ont obligé à régénérer « Dieu t'a pris pour cible ».
-- Ouverture fournie par Yannis, à garder telle quelle en partie 00 :
-  « Avant de commencer, un mot pour toi. Les éditions Gospel Action Productions, GAP… Bonne écoute. »
-  Vérifier à l'écoute que « GAP » est dit comme le mot « Gap ».
+- Garder les mots de Yannis. Ne retoucher que ce qui passe mal à l'oral.
+- Commencer par le mot des éditions : « Avant de commencer, un mot pour toi. Les éditions
+  Gospel Action Productions, Gap, … Bonne écoute. » Écrire « Gap », jamais « GAP » (sinon la voix épelle).
+- Références bibliques et nombres en toutes lettres, jamais de chiffres.
+- Citations et paroles entre guillemets « … ».
+- Reformuler ce que la voix avale : « il s'est tu » → « il est resté silencieux », « ceux-là »…
+- Chapitres de 150 à 380 mots, aux vrais changements de mouvement.
 
 ## Voix
 
-Nicolas Petit (préréglage `audiobook.nicolas-petit`) :
+« Voix Nicolas Petit IA AUDIO Narration » :
 
 | Réglage | Valeur |
 |---|---|
 | voice_id | `aQROLel5sQbj1vuIVi6B` |
 | modèle | `eleven_multilingual_v2` |
-| speed | 0.86 |
-| stability | 0.48 |
-| similarity_boost | 0.88 |
-| style | 0.14 |
-| speaker_boost | oui |
+| stabilité | 0.86 |
+| similarité | 0.78 |
+| style | 0.28 |
+| speaker boost | oui |
+| vitesse | 0.90 |
 
-Génération : `cd livres-audio && python3 generer_livre_audio.py <livre> --pochette <couverture.jpg>`
-(clé dans `ELEVENLABS_API_KEY`). Sortie : MP3 intégral, M4B avec chapitres, un MP3 par chapitre.
-Garder le même niveau sonore que les livres déjà en ligne dans l'app.
+- **Un chapitre = une seule requête** (previous_text / next_text = chapitres voisins). Jamais de
+  collage paragraphe par paragraphe ni de coupe des silences (voix « hachée, qui bute »).
+- 3 prises par chapitre, la meilleure choisie par transcription Whisper comparée au texte.
+- Master : voix seule, mono 44,1 kHz, 192 kb/s, −23 LUFS. Fichiers `ch_001.mp3`… + `ecoute-complete.mp3`.
+
+Commande : `python3 generer_livre_audio.py <livre>` (clé dans `ELEVENLABS_API_KEY`).
 
 ## Couverture
 
