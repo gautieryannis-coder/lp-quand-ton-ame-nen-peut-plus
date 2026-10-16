@@ -4,6 +4,7 @@
 # Pour chaque livres-audio/<livre>/livre.json contenant "generer": true,
 # génère l'audio avec ElevenLabs, le monte, le copie dans ~/Movies/Claude/audiobooks/<livre>/
 # et l'envoie sur Drive. Un livre déjà fabriqué n'est refait que si son texte change.
+main() {
 set -u
 BASE="$HOME/Movies/Claude/livres-audio-auto"
 DEPOT="$BASE/depot"
@@ -40,7 +41,9 @@ for fiche in */livre.json; do
   pochette=(); [ -f "$livre/couverture.jpg" ] && pochette=(--pochette "$livre/couverture.jpg")
   if ! python3 generer_livre_audio.py "$livre" ${pochette[@]+"${pochette[@]}"} > "$livre/journal.txt" 2>&1; then
     note "ÉCHEC : $titre (voir $DEPOT/livres-audio/$livre/journal.txt)"
-    alerte "Échec : $titre"
+    if [ "$(cat "$BASE/.echec-$livre" 2>/dev/null)" != "$empreinte" ]; then
+      alerte "Échec : $titre"; echo "$empreinte" > "$BASE/.echec-$livre"
+    fi
     continue
   fi
   cp "$livre/journal.txt" "$livre/sortie/rapport.txt"
@@ -59,3 +62,5 @@ for fiche in */livre.json; do
   note "terminé : $titre"
   alerte "Prêt : $titre"
 done
+}
+main "$@"; exit
