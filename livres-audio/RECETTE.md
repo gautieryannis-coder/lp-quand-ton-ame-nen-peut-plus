@@ -52,10 +52,19 @@ livres qui brillent, plumes, croix) et **pas d'encart gris** : l'app l'ajoute el
 Drive, dossier Audiobooks (`1zMgiZvC4P40Eix77D58RwO7QNL9jnjnv`), sous-dossier
 « AUDIOBOOKS — À ÉCOUTER ET VALIDER », un sous-dossier par livre. Ne rien pousser sur `main` de ce dépôt (site public).
 
-## Pour que la session cloud génère elle-même
+## Fabrication automatique (iMac)
 
-Dans les réglages de l'environnement cloud (menu de l'environnement → Modifier) :
-- Accès réseau : ajouter `api.elevenlabs.io` aux domaines autorisés ;
-- Variables : `ELEVENLABS_API_KEY` = la clé ElevenLabs.
+L'iMac fabrique seul les livres audio. Installation, une seule fois, dans le Terminal de l'iMac :
 
-Les réglages ne valent que pour les **nouvelles** sessions : en démarrer une après la modification.
+    cd ~/Movies/Claude && git clone -b claude/livre-audio-dieu-t-a-pris-pour-cible https://github.com/gautieryannis-coder/lp-quand-ton-ame-nen-peut-plus.git livres-audio-auto/depot && bash livres-audio-auto/depot/livres-audio/imac/installer.sh
+
+Ensuite, pour chaque nouveau livre :
+1. Yannis envoie le texte à Claude (session cloud) ;
+2. Claude prépare `livres-audio/<livre>/` (texte découpé, `livre.json` avec `"generer": true`,
+   éventuellement `couverture.jpg`) et pousse sur la branche ;
+3. dans les 10 minutes, l'iMac récupère la branche, génère avec ElevenLabs, monte le livre,
+   le copie dans `~/Movies/Claude/audiobooks/<livre>/`, l'envoie sur Drive (« À ÉCOUTER — <titre> »
+   dans le dossier Audiobooks) et affiche une notification « Prêt ».
+
+Un livre déjà fabriqué n'est refait que si son texte, sa fiche ou sa couverture change.
+Journal : `~/Movies/Claude/livres-audio-auto/journal.log`. L'iMac doit être allumé et la session ouverte.
